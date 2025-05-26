@@ -213,8 +213,6 @@
         const normalizedAngle = (2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI);
         const selectedIndex = Math.floor(normalizedAngle / sliceAngle) % currentOptions.length;
         const selectedItem = currentOptions[selectedIndex];
-
-        // 顯示推薦及Google搜尋連結
         resultDiv.innerHTML = `推薦：${selectedItem} <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedItem)}" target="_blank" rel="noopener noreferrer">🔍 在 Google 地圖上搜尋「${selectedItem}」</a>`;
       }
     }
