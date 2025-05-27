@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自訂選項</title>
+  <style>
+    /* 全局盒模型修正 */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background-color: #f8f3ed;
+      color: #5c4b3b;
+      margin: 0;
+      padding: 0;
+    }
+
+    header, footer {
+      background-color: #a66b3c;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    nav {
+      background-color: #d9b382;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    select, input, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    input, select {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #a66b3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #8b522d;
+    }
+
+    section {
+      margin-top: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f2e6d9;
+      border: 1px solid #a66b3c;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+
+    li span {
+      flex-grow: 1;
+    }
+
+    li button.delete {
+      flex-shrink: 0;
+      width: 48px;
+      text-align: center;
+      padding: 6px 0;
+      background-color: #a66b3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    li button.delete:hover {
+      background-color: #8b522d;
+    }
+
+    .empty {
+      color: #999;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍽️ 自訂選項</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">首頁</a>
+    <a href="about.html">關於我們</a>
+    <a href="custom.html">自訂選項</a>
+  </nav>
+
+  <main>
+    <label for="meal-type">選擇餐別：</label>
+    <select id="meal-type">
+      <option value="早餐">早餐</option>
+      <option value="午餐">午餐</option>
+      <option value="晚餐">晚餐</option>
+      <option value="甜點">甜點</option>
+    </select>
+
+    <label for="new-item">新增項目：</label>
+    <input type="text" id="new-item" placeholder="輸入新餐點...">
+
+    <button onclick="addCustomItem()">新增</button>
+
+    <p>以下是你自訂的各餐別項目，可點擊刪除：</p>
+    <div id="mealLists"></div>
+  </main>
+
+  <footer>
+    &copy; 20250528 多媒體-網頁設計期末報告
+  </footer>
+
+  <script>
+    const mealListsDiv = document.getElementById('mealLists');
+    const defaultMeals = { 早餐: [], 午餐: [], 晚餐: [], 甜點: [] };
+
+    function addCustomItem() {
+      const type = document.getElementById('meal-type').value;
+      const item = document.getElementById('new-item').value.trim();
+      if (!item) return alert('請輸入餐點');
+
+      const data = JSON.parse(localStorage.getItem('customMeals') || '{}');
+      if (!data[type]) data[type] = [];
+
+      if (data[type].includes(item)) {
+        alert('此項目已存在！');
+        return;
+      }
+
+      data[type].push(item);
+      localStorage.setItem('customMeals', JSON.stringify(data));
+      alert(`已新增「${item}」至 ${type}`);
+      document.getElementById('new-item').value = '';
+      renderMealLists();
+    }
+
+    function renderMealLists() {
+      const storedMeals = JSON.parse(localStorage.getItem('customMeals') || '{}');
+      mealListsDiv.innerHTML = '';
+
+      Object.keys(defaultMeals).forEach(category => {
+        const ul = document.createElement('ul');
+        const listItems = (storedMeals[category] || []).filter(item => !defaultMeals[category].includes(item));
+
+        const section = document.createElement('section');
+        section.innerHTML = `<h2>${category}</h2>`;
+
+        if (listItems.length === 0) {
+          const empty = document.createElement('p');
+          empty.className = 'empty';
+          empty.textContent = '尚未新增自訂項目';
+          section.appendChild(empty);
+        } else {
+          listItems.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <span>${item}</span>
+              <button class="delete" data-cat="${category}" data-idx="${item}">刪除</button>
+            `;
+            ul.appendChild(li);
+          });
+          section.appendChild(ul);
+        }
+
+        mealListsDiv.appendChild(section);
+      });
+
+      bindDeleteButtons();
+    }
+
+    function bindDeleteButtons() {
+      document.querySelectorAll('.delete').forEach(button => {
+        button.addEventListener('click', () => {
+          const cat = button.getAttribute('data-cat');
+          const item = button.getAttribute('data-idx');
+          const data = JSON.parse(localStorage.getItem('customMeals') || '{}');
+          if (data[cat]) {
+            data[cat] = data[cat].filter(i => i !== item);
+            localStorage.setItem('customMeals', JSON.stringify(data));
+            renderMealLists();
+          }
+        });
+      });
+    }
+
+    // 初始化
+    renderMealLists();
+  </script>
+</body>
+</html>
