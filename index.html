@@ -1,223 +1,200 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>🍽️ 今天吃什麼？</title>
-<style>
-  body {
-    font-family: 'Microsoft JhengHei', sans-serif;
-    background-color: #f8f3ed;
-    color: #5c4b3b;
-    margin: 0; padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  header, footer {
-    background-color: #a66b3c;
-    color: white;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-  }
-  main {
-    width: 90%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0;
-  }
-  .meal-section {
-    text-align: center;
-    margin-top: 20px;
-  }
-  .meal-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .meal-buttons button {
-    padding: 10px 20px;
-    background-color: #d9b382;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  .meal-buttons button.active {
-    background-color: #a66b3c;
-  }
-  .wheel-container {
-    margin: 30px 0 10px;
-    position: relative;
-    width: 300px;
-    height: 300px;
-  }
-  canvas {
-    width: 300px;
-    height: 300px;
-    border: 3px solid #a66b3c;
-    border-radius: 50%;
-    display: block;
-  }
-
-  .arrow {
-    position: absolute;
-    top: 50%;
-    right: -30px;
-    transform: translateY(-50%) rotate(180deg);
-    width: 0;
-    height: 0;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-left: 30px solid #a66b3c;
-    z-index: 10;
-  }
-  .spin-button {
-    padding: 10px 30px;
-    font-size: 18px;
-    background-color: #a66b3c;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    margin: 10px 0;
-  }
-  #result {
-    text-align: center;
-    font-size: 20px;
-    margin-top: 20px;
-    color: #a66b3c;
-    min-height: 50px;
-  }
-  #result a {
-    color: #5c4b3b;
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 8px;
-  }
-  #result a:hover {
-    text-decoration: underline;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>自訂選項 - 今天吃什麼？</title>
+  <style>
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      background-color: #f8f3ed;
+      color: #5c4b3b;
+      margin: 0;
+      padding: 0;
+    }
+    header, footer {
+      background-color: #a66b3c;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+    nav {
+      background-color: #a66b3c;
+      text-align: center;
+      padding: 5px;
+    }
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      margin-top: 30px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #f0e2cd;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    button.delete, button.add {
+      background-color: #a66b3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .empty {
+      color: #aaa;
+      font-style: italic;
+    }
+    .form-section {
+      background: #fff4e6;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    .form-section input, .form-section select {
+      padding: 6px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>🍽️ 今天吃什麼？</h1>
- <h1>🍽️ 轉盤幫你決定!</h1>
-</header>
+  <header>
+    <h1>今天吃甚麼？</h1>
+  </header>
 
-<main>
-  <section class="meal-section">
-    <h2>選擇餐別</h2>
-    <div class="meal-buttons">
-      <button>早餐</button>
-      <button>午餐</button>
-      <button>晚餐</button>
-      <button>甜點</button>
+  <nav>
+    <a href="index.html">新增選項</a>
+    <a href="about.html">關於我們</a>
+    <a href="custom.html">抽抽抽</a>
+  </nav>
+
+  <main>
+    <section class="form-section">
+      <h2>新增餐點</h2>
+      <select id="categorySelect">
+        <option value="早餐">早餐</option>
+        <option value="午餐">午餐</option>
+        <option value="晚餐">晚餐</option>
+        <option value="甜點">甜點</option>
+      </select>
+      <input type="text" id="mealInput" placeholder="輸入餐點名稱" />
+      <button class="add" onclick="addMeal()">新增</button>
+    </section>
+
+    <p>以下是你自訂的各餐別項目，可點擊刪除：</p>
+    <div id="mealLists">
+      <!-- 動態生成 -->
     </div>
-  </section>
+  </main>
 
-  <div class="wheel-container">
-    <canvas id="wheel" width="300" height="300"></canvas>
-    <div class="arrow"></div>
-  </div>
+  <footer>
+    &copy; 2025 今天吃什麼？團隊
+  </footer>
 
-  <button class="spin-button">啟動轉盤！</button>
-  <div id="result"></div>
-</main>
+  <script>
+    const mealListsDiv = document.getElementById('mealLists');
+    const categorySelect = document.getElementById('categorySelect');
+    const mealInput = document.getElementById('mealInput');
 
-<footer>
-  &copy; 20250528 多媒體-網頁設計期末報告
-</footer>
+    const defaultMeals = {
+      '早餐': ['美式早餐', '中式早餐', '西式早餐', '飯糰', '麵包', '不吃'],
+      '午餐': ['便當', '鍋貼', '速食', '腸粉', '麵攤', '壽司'],
+      '晚餐': ['丼飯', '烤肉', '便當', '拉麵', '火鍋', '鍋貼'],
+      '甜點': ['豆花', '車輪餅', '可頌', '起司蛋糕', '提拉米蘇', '冰']
+    };
 
-<script>
-  const mealButtons = document.querySelectorAll('.meal-buttons button');
-  const spinButton = document.querySelector('.spin-button');
-  const resultDiv = document.getElementById('result');
-  const canvas = document.getElementById('wheel');
-  const ctx = canvas.getContext('2d');
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 140;
+    let storedMeals = JSON.parse(localStorage.getItem('mealOptions')) || JSON.parse(JSON.stringify(defaultMeals));
 
-  const mealOptions = {
-    '早餐': ['美式早餐', '中式早餐', '西式早餐', '飯糰', '麵包', '不吃'],
-    '午餐': ['便當', '鍋貼', '速食', '腸粉', '麵攤', '壽司'],
-    '晚餐': ['丼飯', '烤肉', '便當', '拉麵', '火鍋', '鍋貼'],
-    '甜點': ['豆花', '車輪餅', '可頌', '起司蛋糕', '提拉米蘇', '冰']
-  };
+    function renderMealLists() {
+      mealListsDiv.innerHTML = '';
 
-  let currentOptions = [];
-  let angle = 0;
-  let spinSpeed = 0;
-  let animationId;
+      Object.keys(storedMeals).forEach(category => {
+        const ul = document.createElement('ul');
+        const listItems = storedMeals[category].filter(item => !defaultMeals[category].includes(item));
 
-  mealButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      mealButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      currentOptions = mealOptions[button.textContent];
-      drawWheel(currentOptions);
-      resultDiv.innerHTML = '';
-    });
-  });
+        const section = document.createElement('section');
+        section.innerHTML = `<h2>${category}</h2>`;
 
-  function drawWheel(options) {
-    const sliceAngle = 2 * Math.PI / options.length;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(angle);
-    for (let i = 0; i < options.length; i++) {
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.fillStyle = i % 2 === 0 ? '#d9b382' : '#f4e1c1';
-      ctx.arc(0, 0, radius, i * sliceAngle, (i + 1) * sliceAngle);
-      ctx.fill();
+        if (listItems.length === 0) {
+          const empty = document.createElement('p');
+          empty.className = 'empty';
+          empty.textContent = '尚未新增自訂項目';
+          section.appendChild(empty);
+        } else {
+          listItems.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <span>${item}</span>
+              <button class="delete" data-cat="${category}" data-idx="${item}">刪除</button>
+            `;
+            ul.appendChild(li);
+          });
+          section.appendChild(ul);
+        }
 
-      ctx.save();
-      ctx.rotate(i * sliceAngle + sliceAngle / 2);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#5c4b3b';
-      ctx.font = '16px Microsoft JhengHei';
-      ctx.fillText(options[i], radius - 10, 5);
-      ctx.restore();
-    }
-    ctx.restore();
-  }
+        mealListsDiv.appendChild(section);
+      });
 
-  spinButton.addEventListener('click', () => {
-    if (animationId) cancelAnimationFrame(animationId);
-    if (currentOptions.length === 0) {
-      resultDiv.textContent = '請先選擇餐別！';
-      return;
+      bindDeleteButtons();
     }
 
-    spinSpeed = Math.random() * 0.3 + 0.3;
+    function bindDeleteButtons() {
+      const buttons = document.querySelectorAll('button.delete');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.getAttribute('data-cat');
+          const item = btn.getAttribute('data-idx');
+          storedMeals[cat] = storedMeals[cat].filter(i => i !== item);
+          localStorage.setItem('mealOptions', JSON.stringify(storedMeals));
+          renderMealLists();
+        });
+      });
+    }
 
-    function animate() {
-      if (spinSpeed > 0.01) {
-        angle += spinSpeed;
-        spinSpeed *= 0.98;
-        drawWheel(currentOptions);
-        animationId = requestAnimationFrame(animate);
-      } else {
-        const sliceAngle = 2 * Math.PI / currentOptions.length;
-        const normalizedAngle = (2 * Math.PI - (angle % (2 * Math.PI))) % (2 * Math.PI);
-        const selectedIndex = Math.floor(normalizedAngle / sliceAngle) % currentOptions.length;
-        const selectedItem = currentOptions[selectedIndex];
-        resultDiv.innerHTML = `推薦：${selectedItem} <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedItem)}" target="_blank" rel="noopener noreferrer">🔍 在 Google 地圖上搜尋「${selectedItem}」</a>`;
+    function addMeal() {
+      const category = categorySelect.value;
+      const mealName = mealInput.value.trim();
+      if (mealName === '') {
+        alert('請輸入餐點名稱！');
+        return;
       }
+
+      if (storedMeals[category].includes(mealName)) {
+        alert('此餐點已存在！');
+        return;
+      }
+
+      storedMeals[category].push(mealName);
+      localStorage.setItem('mealOptions', JSON.stringify(storedMeals));
+      mealInput.value = '';
+      renderMealLists();
     }
-    animate();
-  });
-</script>
+
+    renderMealLists();
+  </script>
 </body>
 </html>
